@@ -2,25 +2,31 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 3000; // 你可以更改端口号
+const port = 4500; // 你可以根据需要修改端口号
 
 const server = http.createServer((req, res) => {
-    // 设置 Content-Type 为 text/html
-    res.writeHead(200, {'Content-Type': 'text/html'});
+  const filePath = path.join(__dirname, 'index.html');
 
-    // 读取 index.html 文件并发送内容
-    fs.readFile(path.join(__dirname, 'index.html'), 'utf8', (err, data) => {
-        if (err) {
-            res.writeHead(500, {'Content-Type': 'text/plain'});
-            res.end('Internal Server Error');
-            console.error('Error reading index.html:', err);
-            return;
-        }
+  // 检查请求的路径是否需要重定向
+  if (req.url !== '/') {
+    res.writeHead(302, { 'Location': '/' });
+    res.end();
+    return;
+  }
 
-        res.end(data);
-    });
+  // 读取 index.html 文件并返回
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end('Internal Server Error');
+      return;
+    }
+
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(data);
+  });
 });
 
-server.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
+server.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
