@@ -5,6 +5,13 @@ const path = require('path');
 const port = 4500; // 你可以根据需要修改端口号
 
 const server = http.createServer((req, res) => {
+  // 忽略对 favicon.ico 的请求
+  if (req.url === '/favicon.ico') {
+    res.writeHead(204); // No Content
+    res.end();
+    return;
+  }
+
   const filePath = path.join(__dirname, 'index.html');
 
   // 检查请求的路径是否需要重定向
